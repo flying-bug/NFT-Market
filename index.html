@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtSphere | Premium NFT Marketplace</title>
+    <meta name="description" content="Discover, collect, and sell extraordinary NFTs on ArtSphere, the premier marketplace for digital art and collectibles.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" type="application/javascript"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="app.navigate('home')">
+                <i class="ph ph-planet"></i>
+                <span>ArtSphere</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#" class="nav-link active" onclick="app.navigate('home')" id="nav-home">Explore</a>
+                <a href="#" class="nav-link" onclick="app.navigate('create')" id="nav-create">Create</a>
+                <a href="#" class="nav-link" onclick="app.navigate('profile')" id="nav-profile">Profile</a>
+                <a href="#" class="nav-link" onclick="app.navigate('verify')" id="nav-verify">Verify</a>
+            </div>
+            
+            <div class="nav-actions">
+                <button id="connect-wallet-btn" class="btn btn-primary" onclick="app.connectWallet()">
+                    <i class="ph ph-wallet"></i>
+                    <span>Connect Wallet</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- VIEWS -->
+
+        <!-- 1. HOME VIEW (Marketplace) -->
+        <section id="view-home" class="view active-view">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Discover & Collect <br><span class="gradient-text">Extraordinary</span> NFTs</h1>
+                    <p class="hero-subtitle">The leading decentralized marketplace for rare digital art, music, and collectibles. Built on cutting-edge blockchain technology.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg" onclick="document.getElementById('marketplace-grid').scrollIntoView({behavior: 'smooth'})">Explore Now</button>
+                        <button class="btn btn-secondary btn-lg" onclick="app.navigate('create')">Create NFT</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Featured NFT" class="hero-card-img">
+                        <div class="hero-card-info">
+                            <div>
+                                <h3>Cosmic Perspective</h3>
+                                <p>By <span class="gradient-text">0xCreator</span></p>
+                            </div>
+                            <div class="hero-card-price">
+                                <span>Current Bid</span>
+                                <h4>0.45 ETH</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marketplace Section -->
+            <div class="section-header">
+                <h2>Trending <span class="gradient-text">Drops</span></h2>
+                <div class="filters" style="display:flex; gap:0.5rem; align-items:center;">
+                    <input type="text" id="search-filter" placeholder="Search NFT name..." class="input-field" style="padding: 0.5rem; max-width: 200px;" oninput="app.applyFilters()">
+                    <select class="select-filter" id="category-filter" onchange="app.applyFilters()">
+                        <option value="all">All Categories</option>
+                        <option value="Digital Art">Digital Art</option>
+                        <option value="Collectible">Collectible</option>
+                        <option value="Game Item">Game Item</option>
+                    </select>
+                    <select class="select-filter" id="sort-filter" onchange="app.applyFilters()">
+                        <option value="recent">Recently Added</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="marketplace-grid" class="nft-grid">
+                <!-- NFT Cards injected here via JS -->
+            </div>
+            <div id="loading-marketplace" class="loader-container">
+                <div class="spinner"></div>
+                <p>Loading market items...</p>
+            </div>
+        </section>
+
+        <!-- 2. CREATE NFT VIEW -->
+        <section id="view-create" class="view">
+            <div class="create-container">
+                <div class="create-header">
+                    <h2>Mint Your <span class="gradient-text">Masterpiece</span></h2>
+                    <p>Upload your digital asset and mint it as an ERC-721 token on the blockchain.</p>
+                </div>
+
+                <div class="create-layout">
+                    <div class="create-form">
+                        <div class="form-group">
+                            <label for="nft-image">Upload Media</label>
+                            <div class="upload-area" id="upload-area">
+                                <i class="ph ph-upload-simple"></i>
+                                <p>Drag & drop or click to upload</p>
+                                <span>JPG, PNG, GIF, WEBP. Max 10MB.</span>
+                                <input type="file" id="nft-image" accept="image/*" class="hidden-input">
+                            </div>
+                            <img id="image-preview" class="image-preview" style="display:none;" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nft-name">NFT Name</label>
+                            <input type="text" id="nft-name" placeholder="e.g. 'Cosmic Perspective #1'" class="input-field">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nft-desc">Description</label>
+                            <textarea id="nft-desc" rows="4" placeholder="Provide a detailed description of your item..." class="input-field"></textarea>
+                        </div>
+
+                        <div class="form-group" style="display:flex; gap:1rem;">
+                            <div style="flex:1;">
+                                <label for="nft-category">Category</label>
+                                <select id="nft-category" class="input-field select-filter" style="width:100%;">
+                                    <option value="Digital Art">Digital Art</option>
+                                    <option value="Collectible">Collectible</option>
+                                    <option value="Game Item">Game Item</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;">
+                                <label for="nft-royalty">Royalty % (Display Only)</label>
+                                <input type="number" id="nft-royalty" min="0" max="50" placeholder="e.g. 10" value="10" class="input-field" disabled title="Not implemented in contract">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nft-price">Listing Price (ETH)</label>
+                            <input type="number" id="nft-price" step="0.001" min="0" placeholder="e.g. 0.05" class="input-field">
+                        </div>
+
+                        <div id="mint-result" style="display:none; margin-bottom: 1.5rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px;">
+                            <h3 style="color:#10b981; margin-bottom: 1rem;"><i class="ph ph-check-circle"></i> Mint Successful</h3>
+                            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 0.5rem; font-size: 0.9rem; word-break: break-all;">
+                                <span style="color:var(--text-secondary);">Token ID:</span> <strong id="mint-res-id">#1</strong>
+                                <span style="color:var(--text-secondary);">Creator:</span> <span id="mint-res-creator">0x...</span>
+                                <span style="color:var(--text-secondary);">Status:</span> <span>Minted successfully & Listed</span>
+                                <span style="color:var(--text-secondary);">Meta URI:</span> <a id="mint-res-uri" href="#" target="_blank" style="color:var(--accent-1);">View IPFS JSON</a>
+                                <span style="color:var(--text-secondary);">Tx Hash:</span> <a id="mint-res-tx" href="#" target="_blank" style="color:var(--accent-2);">View on Etherscan</a>
+                            </div>
+                        </div>
+
+                        <button id="mint-btn" class="btn btn-primary btn-block btn-lg" onclick="app.mintNFT()">
+                            <i class="ph ph-magic-wand"></i> Mint & List NFT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PROFILE VIEW -->
+        <section id="view-profile" class="view">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-circle"></div>
+                </div>
+                <div class="profile-info">
+                    <h2>Your <span class="gradient-text">Vault</span></h2>
+                    <div class="wallet-address-pill" id="profile-wallet-address">
+                        Not Connected
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="tab-btn active" onclick="app.switchProfileTab('collected')" id="tab-collected">Collected</button>
+                <button class="tab-btn" onclick="app.switchProfileTab('listed')" id="tab-listed">Listed for Sale</button>
+            </div>
+
+            <div class="tab-content active" id="content-collected">
+                <div id="collected-grid" class="nft-grid">
+                    <!-- Owned NFTs injected here -->
+                </div>
+                <div id="loading-collected" class="loader-container" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+                <div id="empty-collected" class="empty-state" style="display:none;">
+                    <i class="ph ph-ghost"></i>
+                    <p>No NFTs found in your collection.</p>
+                </div>
+            </div>
+
+            <div class="tab-content" id="content-listed">
+                <div id="listed-grid" class="nft-grid">
+                    <!-- Listed NFTs injected here -->
+                </div>
+                <div id="loading-listed" class="loader-container" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+                <div id="empty-listed" class="empty-state" style="display:none;">
+                    <i class="ph ph-storefront"></i>
+                    <p>You haven't listed any NFTs for sale.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. VERIFY VIEW -->
+        <section id="view-verify" class="view">
+            <div class="create-container" style="max-width: 600px;">
+                <div class="create-header">
+                    <h2>Verify <span class="gradient-text">Ownership</span></h2>
+                    <p>Enter a Token ID to verify its authenticity, creator, and current status on the blockchain.</p>
+                </div>
+
+                <div class="create-layout">
+                    <div class="create-form" style="text-align: center;">
+                        <div class="form-group">
+                            <input type="number" id="verify-token-id" placeholder="Enter Token ID (e.g. 1)" class="input-field" style="text-align: center; font-size: 1.5rem; padding: 1rem;">
+                        </div>
+                        <button class="btn btn-primary btn-block btn-lg" onclick="app.verifyNFT()">
+                            <i class="ph ph-magnifying-glass"></i> Verify Now
+                        </button>
+
+                        <!-- Result Area -->
+                        <div id="verify-result" style="display:none; margin-top: 2rem; text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                            <div style="display:flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <img id="verify-image" src="" style="width: 120px; height: 120px; border-radius: 12px; object-fit: cover;">
+                                <div>
+                                    <h3 id="verify-name" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Name</h3>
+                                    <p id="verify-desc" style="color: var(--text-secondary); font-size: 0.9rem;">Description</p>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; font-size: 0.9rem; word-break: break-all;">
+                                <div style="color: var(--text-secondary);">Token ID:</div>
+                                <div id="verify-id" style="font-family: monospace; font-weight: bold;">#1</div>
+                                
+                                <div style="color: var(--text-secondary);">Creator:</div>
+                                <div id="verify-creator" style="font-family: monospace; color: var(--accent-1);">0x...</div>
+                                
+                                <div style="color: var(--text-secondary);">Current Owner:</div>
+                                <div id="verify-owner" style="font-family: monospace; color: var(--accent-2);">0x...</div>
+                                
+                                <div style="color: var(--text-secondary);">Status:</div>
+                                <div id="verify-status" style="font-weight: bold;">Sold</div>
+                                
+                                <div style="color: var(--text-secondary);">Metadata URI:</div>
+                                <div><a id="verify-uri" href="#" target="_blank" style="color: var(--accent-3); text-decoration: none;">ipfs://...</a></div>
+                            </div>
+                        </div>
+
+                        <div id="loading-verify" class="spinner" style="display:none; margin: 2rem auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODALS -->
+        <!-- Resell Modal -->
+        <div id="resell-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>List NFT for Sale</h3>
+                    <button class="close-btn" onclick="app.closeModal('resell-modal')"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="resell-price">Price (ETH)</label>
+                        <input type="number" id="resell-price" step="0.001" min="0" placeholder="0.1" class="input-field">
+                    </div>
+                    <input type="hidden" id="resell-token-id">
+                    <button class="btn btn-primary btn-block" onclick="app.executeResell()">List Item</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Modal -->
+        <div id="transfer-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Transfer NFT</h3>
+                    <button class="close-btn" onclick="app.closeModal('transfer-modal')"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="transfer-address">Recipient Address</label>
+                        <input type="text" id="transfer-address" placeholder="0x..." class="input-field">
+                    </div>
+                    <input type="hidden" id="transfer-token-id">
+                    <button class="btn btn-primary btn-block" onclick="app.executeTransfer()">Transfer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Transaction Overlay -->
+        <div id="tx-overlay" class="modal">
+            <div class="modal-content" style="text-align: center; max-width: 300px;">
+                <div class="spinner" style="margin: 0 auto 1.5rem auto;"></div>
+                <h3 id="tx-title" style="margin-bottom: 0.5rem;">Processing...</h3>
+                <p id="tx-desc" style="color: var(--text-secondary); font-size: 0.9rem;">Please confirm the transaction in your wallet.</p>
+            </div>
+        </div>
+
+        <!-- Edit Price Modal -->
+        <div id="edit-price-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Update Listing Price</h3>
+                    <button class="close-btn" onclick="app.closeModal('edit-price-modal')"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-price-input">New Price (ETH)</label>
+                        <input type="number" id="edit-price-input" step="0.001" min="0" placeholder="0.1" class="input-field">
+                    </div>
+                    <input type="hidden" id="edit-price-token-id">
+                    <button class="btn btn-primary btn-block" onclick="app.executeEditPrice()">Update Price</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFT Detail Modal -->
+        <div id="nft-detail-modal" class="modal">
+            <div class="modal-content" style="max-width: 800px; width: 90%;">
+                <div class="modal-header">
+                    <h3>NFT Details</h3>
+                    <button class="close-btn" onclick="app.closeModal('nft-detail-modal')"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <img id="detail-image" src="" alt="NFT" style="width: 100%; border-radius: 12px; object-fit: cover;">
+                        </div>
+                        <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display:flex; justify-content: space-between; align-items: start;">
+                                <h2 id="detail-name" style="margin: 0; font-size: 2rem;">Name</h2>
+                                <span id="detail-id" style="font-family: monospace; font-size: 1.2rem; color: var(--text-secondary); background: rgba(255,255,255,0.1); padding: 0.2rem 0.6rem; border-radius: 6px;">#1</span>
+                            </div>
+                            <div style="display: inline-block; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold; width: fit-content;" id="detail-category">
+                                Digital Art
+                            </div>
+                            <p id="detail-desc" style="color: var(--text-secondary); line-height: 1.6; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">Description</p>
+                            
+                            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 0.8rem; font-size: 0.95rem; word-break: break-all;">
+                                <span style="color: var(--text-secondary);">Seller:</span>
+                                <span id="detail-seller" style="font-family: monospace; color: var(--accent-1);">0x...</span>
+                                
+                                <span style="color: var(--text-secondary);">Owner:</span>
+                                <span id="detail-owner" style="font-family: monospace; color: var(--accent-2);">0x...</span>
+                            </div>
+
+                            <div style="margin-top: auto; padding-top: 1rem;">
+                                <span style="color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">Current Price</span>
+                                <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">
+                                    <i class="ph ph-currency-eth"></i> <span id="detail-price">0.00</span> ETH
+                                </div>
+                                <div id="detail-action-container">
+                                    <!-- Action button injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </main>
+
+    <script src="./app.js"></script>
+</body>
+</html>

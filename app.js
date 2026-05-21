@@ -1,5 +1,5 @@
 // Configuration
-const contractAddress = "0x95e256A1ca9dA61A559940C75693a4C78E41dEfe"; // Vui lòng điền địa chỉ Smart Contract thực tế vào đây
+const contractAddress = "0xe4D9a81F8D88A1896853272d7407c8D26b1fd2dB"; // Vui lòng điền địa chỉ Smart Contract thực tế vào đây
 
 const contractABI = [
     "constructor()",

@@ -121,6 +121,10 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard, Ownable {
         
         _itemsSold++;
         _transfer(address(this), msg.sender, tokenId);
+
+        // Hoàn trả lại phí niêm yết (listingPrice) cho người dùng
+        (bool success, ) = payable(msg.sender).call{value: listingPrice}("");
+        require(success, "Refund failed");
     }
 
     /* Updates the price of an already listed item */

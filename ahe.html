@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSP & Servlet: Công Nghệ Web Động - Wiki Học Tập</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Dark theme colors (default) */
+            --bg-primary: #0b0f19;
+            --bg-secondary: rgba(17, 24, 39, 0.75);
+            --bg-card: rgba(31, 41, 55, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-purple: #a78bfa;
+            --accent-cyan: #22d3ee;
+            --accent-green: #34d399;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --code-bg: #111827;
+            --sidebar-width: 320px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        [data-theme="light"] {
+            /* Light theme colors */
+            --bg-primary: #f8fafc;
+            --bg-secondary: rgba(241, 245, 249, 0.8);
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-purple: #6366f1;
+            --accent-cyan: #0284c7;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-red: #dc2626;
+            --code-bg: #f1f5f9;
+            --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 99px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling with Glassmorphism */
+        aside {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 32px 24px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 18px;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background-color: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        [data-theme="light"] .search-input {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+            width: 18px;
+            height: 18px;
+        }
+
+        .nav-list {
+            list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 4px;
+        }
+
+        .nav-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nav-item {
+            margin-bottom: 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        [data-theme="light"] .nav-link:hover,
+        [data-theme="light"] .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            font-family: inherit;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent-purple);
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Main Content Styling */
+        main {
+            margin-left: var(--sidebar-width);
+            padding: 56px 80px;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 48px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 32px;
+        }
+
+        .meta-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(34, 211, 238, 0.1));
+            border: 1px solid rgba(34, 211, 238, 0.25);
+            border-radius: 99px;
+            color: var(--accent-cyan);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .doc-desc {
+            color: var(--text-secondary);
+            font-size: 17px;
+            font-weight: 400;
+        }
+
+        section {
+            margin-bottom: 72px;
+            scroll-margin-top: 40px;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 28px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-cyan));
+            border-radius: 99px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 32px 0 16px 0;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        p {
+            margin-bottom: 18px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Card components */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.25);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+            opacity: 0.8;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Table Design */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin: 24px 0;
+            background-color: var(--bg-card);
+            box-shadow: var(--glass-shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14.5px;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            font-weight: 700;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.8px;
+        }
+
+        [data-theme="light"] th {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        [data-theme="light"] tr:hover td {
+            background-color: rgba(0, 0, 0, 0.005);
+        }
+
+        /* Code Blocks styling */
+        .code-block-wrapper {
+            position: relative;
+            margin: 24px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 18px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        [data-theme="light"] .code-header {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .copy-btn {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-cyan);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 13.5px;
+        }
+
+        code {
+            color: #e5e7eb;
+        }
+
+        /* Inline highlighting tags */
+        .keyword {
+            color: #f43f5e;
+            font-weight: 600;
+        }
+
+        .string {
+            color: #34d399;
+        }
+
+        .comment {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .type {
+            color: #60a5fa;
+        }
+
+        .tag {
+            color: #38bdf8;
+        }
+
+        .attr {
+            color: #fbbf24;
+        }
+
+        code.inline {
+            background-color: var(--bg-secondary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--accent-cyan);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Timeline / Lifecycles */
+        .lifecycle-list {
+            list-style: none;
+            position: relative;
+            padding-left: 28px;
+            margin: 24px 0;
+        }
+
+        .lifecycle-list::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-cyan));
+            opacity: 0.5;
+        }
+
+        .lifecycle-step {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .lifecycle-step::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 7px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-purple);
+            border: 2px solid var(--bg-primary);
+            box-shadow: 0 0 8px var(--accent-purple);
+        }
+
+        .lifecycle-step:hover::before {
+            background-color: var(--accent-cyan);
+            transform: scale(1.3);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.06) 0%, rgba(34, 211, 238, 0.06) 100%);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--text-primary);
+        }
+
+        /* Visual Flowcharts */
+        .visual-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin: 24px 0;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        [data-theme="light"] .visual-flow {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .flow-node {
+            flex: 1;
+            min-width: 220px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+        }
+
+        .flow-node-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .flow-arrow {
+            font-size: 20px;
+            color: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Interactive Quiz Styles */
+        .quiz-container {
+            background-color: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 36px;
+            margin-top: 28px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .quiz-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quiz-progress-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .quiz-progress-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .quiz-progress-bar {
+            width: 120px;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        [data-theme="light"] .quiz-progress-bar {
+            background-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+            border-radius: 99px;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-question {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .quiz-option {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px 22px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        [data-theme="light"] .quiz-option {
+            background-color: rgba(0, 0, 0, 0.01);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-purple);
+            background-color: rgba(139, 92, 246, 0.06);
+            transform: translateX(4px);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-green) !important;
+            background-color: rgba(52, 211, 153, 0.12) !important;
+            color: var(--accent-green) !important;
+            font-weight: 600;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--accent-red) !important;
+            background-color: rgba(248, 113, 113, 0.12) !important;
+            color: var(--accent-red) !important;
+            box-shadow: 0 0 12px rgba(248, 113, 113, 0.15);
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.02);
+            font-size: 14.5px;
+            border-left: 4px solid var(--accent-cyan);
+            line-height: 1.6;
+            display: none;
+            box-shadow: var(--glass-shadow);
+        }
+
+        [data-theme="light"] .quiz-feedback {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .quiz-next-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            float: right;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .quiz-next-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Mobile drawer controls */
+        .mobile-header {
+            display: none;
+            height: var(--header-height);
+            background-color: var(--bg-secondary);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 101;
+            padding: 0 24px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .menu-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            aside {
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            aside.open {
+                transform: translateX(0);
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            main {
+                margin-left: 0;
+                padding: calc(var(--header-height) + 32px) 24px 48px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="logo-area" style="margin-bottom: 0;">
+            <div class="logo-icon">JS</div>
+            <div class="logo-text">JSP & Servlet</div>
+        </div>
+        <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon">JS</div>
+            <div class="logo-text">JSP & Servlet</div>
+        </div>
+
+        <div class="search-container">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search" class="search-input" placeholder="Tìm kiếm tài liệu..."
+                aria-label="Search documents">
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#tong-quan" class="nav-link active">1. Tổng Quan & So Sánh</a></li>
+            <li class="nav-item"><a href="#vong-doi" class="nav-link">2. Vòng Đời (Lifecycle)</a></li>
+            <li class="nav-item"><a href="#action-tags" class="nav-link">3. Thẻ Hành Động (Action Tag)</a></li>
+            <li class="nav-item"><a href="#scripting-elements" class="nav-link">4. Scripting Elements</a></li>
+            <li class="nav-item"><a href="#implicit-objects" class="nav-link">5. Đối Tượng Ẩn (Implicit)</a></li>
+            <li class="nav-item"><a href="#jstl-el" class="nav-link">★ JSTL & Expression Language</a></li>
+            <li class="nav-item"><a href="#servlet-api" class="nav-link">6. Servlet API & Cấu Trúc</a></li>
+            <li class="nav-item"><a href="#request-response" class="nav-link">7. Context, Request & Response</a></li>
+            <li class="nav-item"><a href="#mvc" class="nav-link">8. Kiến Trúc MVC (Model 1 & 2)</a></li>
+            <li class="nav-item"><a href="#session-management" class="nav-link">9. Quản Lý Phiên (Session)</a></li>
+            <li class="nav-item"><a href="#filter-exceptions" class="nav-link">10. Bộ Lọc & Xử Lý Lỗi</a></li>
+            <li class="nav-item"><a href="#client-server" class="nav-link">11. Mô Hình Client-Server</a></li>
+            <li class="nav-item"><a href="#trac-nghiem-on-tap" class="nav-link"
+                    style="color: var(--accent-orange); font-weight: 700; margin-top: 12px; border: 1px dashed rgba(251, 146, 60, 0.3); background-color: rgba(251, 146, 60, 0.02);">📝
+                    Trắc Nghiệm Ôn Tập</a></li>
+        </ul>
+
+        <button class="theme-toggle-btn" id="theme-toggle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span>Giao Diện Sáng/Tối</span>
+        </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+        <header>
+            <span class="meta-tag">Học Phần PRJ301 / JWEB - Đại Học FPT</span>
+            <h1>JSP & Servlet: Công Nghệ Web Động</h1>
+            <p class="doc-desc">Tổng hợp kiến thức cốt lõi, vòng đời, quản lý phiên và mô hình MVC trong phát triển ứng
+                dụng Java Web.</p>
+        </header>
+
+        <!-- Section 1: Tổng Quan & So Sánh -->
+        <section id="tong-quan">
+            <h2>1. Tổng Quan & So Sánh</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">
+                        <span style="color: var(--accent-purple);">☕</span> JSP (JavaServer Pages) là gì?
+                    </div>
+                    <p>Là một công nghệ Java cho phép tạo các trang web động bằng cách nhúng mã Java trực tiếp vào mã
+                        HTML.</p>
+                    <p><strong>Mục đích chính:</strong> Tạo giao diện người dùng (UI) trên các ứng dụng web để hiển thị
+                        thông tin trực quan cho Client.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">
+                        <span style="color: var(--accent-cyan);">⚙️</span> Servlet là gì?
+                    </div>
+                    <p>Là các lớp Java chạy trên máy chủ (Server-side class), kế thừa các chức năng để tiếp nhận các yêu
+                        cầu HTTP và trả về các phản hồi phù hợp.</p>
+                    <p><strong>Mục đích chính:</strong> Xử lý logic nghiệp vụ (business logic), kiểm soát luồng điều
+                        hướng, và tương tác trực tiếp với cơ sở dữ liệu.</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Sự Khác Biệt Chính giữa JSP và Servlet</h3>
+                <p style="margin-top: 8px;"><strong>JSP:</strong> Tập trung vào giao diện (View), dễ viết code HTML hơn,
+                    thích hợp để hiển thị dữ liệu.</p>
+                <p><strong>Servlet:</strong> Tập trung vào logic điều khiển (Controller), cấu trúc code Java hoàn chỉnh,
+                    tối ưu cho xử lý dữ liệu.</p>
+                <p style="margin-top: 8px; font-style: italic; color: var(--accent-cyan);">* Lưu ý: Thực chất JSP sẽ
+                    được Web Container dịch ra thành Servlet ở phía sau, vì vậy chúng có khả năng thực hiện mọi tác vụ
+                    tương đương Servlet.</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Vòng Đời -->
+        <section id="vong-doi">
+            <h2>2. Vòng Đời (Lifecycle)</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Vòng Đời của JSP</div>
+                    <ul class="lifecycle-list">
+                        <li class="lifecycle-step"><strong>Translation (Dịch):</strong> Container phân tích mã JSP và
+                            dịch nó thành một mã nguồn Servlet (.java).</li>
+                        <li class="lifecycle-step"><strong>Compilation (Biên dịch):</strong> Mã nguồn Servlet được biên
+                            dịch thành file bytecode (.class).</li>
+                        <li class="lifecycle-step"><strong>Loading (Nạp):</strong> Bytecode của Servlet được nạp vào bộ
+                            nhớ JVM của Container.</li>
+                        <li class="lifecycle-step"><strong>Instantiation (Khởi tạo đối tượng):</strong> Tạo thực thể
+                            Servlet thông qua hàm constructor.</li>
+                        <li class="lifecycle-step"><strong>Initialization (Cấu hình):</strong> Container gọi phương thức
+                            <code class="inline">init()</code> để thiết lập cấu hình ban đầu.</li>
+                        <li class="lifecycle-step"><strong>Request Processing (Xử lý yêu cầu):</strong> Đối với mỗi yêu
+                            cầu của client, container gọi phương thức <code class="inline">service()</code> (tương ứng
+                            gọi <code class="inline">doGet()</code>, <code class="inline">doPost()</code>, v.v.).</li>
+                        <li class="lifecycle-step"><strong>Destruction (Hủy bỏ):</strong> Khi ứng dụng ngừng chạy,
+                            container gọi phương thức <code class="inline">destroy()</code> để giải phóng tài nguyên.
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title">Vòng Đời của Servlet</div>
+                    <ul class="lifecycle-list">
+                        <li class="lifecycle-step"><strong>init(ServletConfig):</strong> Được gọi duy nhất 1 lần khi
+                            servlet được tải vào bộ nhớ để thiết lập tài nguyên khởi tạo ban đầu.</li>
+                        <li class="lifecycle-step"><strong>service(request, response):</strong> Được gọi nhiều lần, mỗi
+                            lần có yêu cầu HTTP gửi đến. Nó xác định loại phương thức HTTP để phân luồng đến <code
+                                class="inline">doGet()</code>, <code class="inline">doPost()</code>.</li>
+                        <li class="lifecycle-step"><strong>destroy():</strong> Được gọi 1 lần khi đóng máy chủ hoặc giải
+                            phóng bộ nhớ để đóng kết nối, lưu log hoặc dọn dẹp các tài nguyên.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Thẻ Hành Động (Action Tag) -->
+        <section id="action-tags">
+            <h2>3. Thẻ Hành Động (Action Tag)</h2>
+            <p>Action Tags trong JSP là các thẻ XML đặc biệt cho phép lập trình viên thực hiện các tác vụ động như nhúng
+                một trang khác, truyền tham số, hoặc điều hướng trang mà không cần viết mã Java thô trực tiếp.</p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thẻ Hành Động</th>
+                            <th>Mô Tả</th>
+                            <th>Ví Dụ Sử Dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="inline" style="color: var(--accent-purple);">&lt;jsp:include&gt;</code>
+                            </td>
+                            <td>Nhúng nội dung của một tài nguyên khác (JSP, HTML hoặc Servlet) vào trang hiện tại lúc
+                                runtime.</td>
+                            <td><code class="inline">&lt;jsp:include page="header.jsp" /&gt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="inline" style="color: var(--accent-purple);">&lt;jsp:forward&gt;</code>
+                            </td>
+                            <td>Chuyển hướng (forward) yêu cầu hiện tại đến một tài nguyên khác cùng máy chủ mà không
+                                làm thay đổi URL trên trình duyệt client.</td>
+                            <td><code class="inline">&lt;jsp:forward page="login.jsp" /&gt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="inline" style="color: var(--accent-purple);">&lt;jsp:param&gt;</code></td>
+                            <td>Truyền tham số (cặp name-value) vào trong thẻ <code class="inline">include</code> hoặc
+                                <code class="inline">forward</code>.</td>
+                            <td>
+                                <div class="code-block-wrapper" style="margin: 0; font-size: 12px;">
+                                    <pre><code><span class="tag">&lt;jsp:forward</span> <span class="attr">page</span>=<span class="string">"login.jsp"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;jsp:param</span> <span class="attr">name</span>=<span class="string">"username"</span> <span class="attr">value</span>=<span class="string">"JohnDoe"</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/jsp:forward&gt;</span></code></pre>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 4: Scripting Elements -->
+        <section id="scripting-elements">
+            <h2>4. Scripting Elements trong JSP</h2>
+            <p>Cho phép chèn mã nguồn Java trực tiếp vào tài liệu JSP. Gồm 3 loại chính sau đây:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">1. Declaration (Khai báo)</div>
+                    <p>Khai báo biến hoặc phương thức ở cấp độ lớp Servlet được sinh ra (instance variables/methods). Có
+                        phạm vi hoạt động trên toàn trang JSP.</p>
+                    <p><strong>Cú pháp:</strong> <code class="inline">&lt;%! ... %&gt;</code></p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>JSP Declaration Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;%!</span>
+    <span class="keyword">int</span> counter = 0;
+    <span class="keyword">public void</span> incrementCounter() {
+        counter++;
+    }
+<span class="tag">%&gt;</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">2. Expression (Biểu thức)</div>
+                    <p>Đánh giá một biểu thức Java và chuyển kết quả thành chuỗi để in trực tiếp ra trang HTML output.
+                        Không dùng dấu chấm phẩy ở cuối.</p>
+                    <p><strong>Cú pháp:</strong> <code class="inline">&lt;%= ... %&gt;</code></p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>JSP Expression Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;%=</span> <span class="string">"Hello, World!"</span> <span class="tag">%&gt;</span>
+<span class="tag">&lt;%=</span> counter <span class="tag">%&gt;</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-title">3. Scriptlet (Mã lệnh)</div>
+                <p>Chèn trực tiếp các khối mã Java thực thi vào trong phương thức xử lý yêu cầu <code
+                        class="inline">_jspService()</code> của Servlet.</p>
+                <p><strong>Cú pháp:</strong> <code class="inline">&lt;% ... %&gt;</code></p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span>JSP Scriptlet Example</span>
+                        <button class="copy-btn">Copy</button>
+                    </div>
+                    <pre><code><span class="tag">&lt;%</span>
+    <span class="type">String</span> username = request.getParameter(<span class="string">"username"</span>);
+    <span class="keyword">if</span> (username != <span class="keyword">null</span>) {
+        out.println(<span class="string">"Hello, "</span> + username);
+    } <span class="keyword">else</span> {
+        out.println(<span class="string">"Hello, Guest"</span>);
+    }
+<span class="tag">%&gt;</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Đối Tượng Ẩn -->
+        <section id="implicit-objects">
+            <h2>5. Đối Tượng Ẩn (Implicit Objects)</h2>
+            <p>JSP cung cấp 9 đối tượng đặc biệt đã được container khai báo sẵn mà lập trình viên có thể gọi ra và dùng
+                trực tiếp bất kỳ lúc nào.</p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên Đối Tượng</th>
+                            <th>Kiểu Class / Interface</th>
+                            <th>Mô Tả Chức Năng</th>
+                            <th>Ví Dụ Thực Tế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">request</strong></td>
+                            <td><code class="inline">HttpServletRequest</code></td>
+                            <td>Đại diện cho yêu cầu HTTP từ phía client (chứa các parameter, header, cookies).</td>
+                            <td><code class="inline">request.getParameter("username")</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">response</strong></td>
+                            <td><code class="inline">HttpServletResponse</code></td>
+                            <td>Đại diện cho phản hồi gửi về client, dùng để cấu hình Header, redirect, content-type.
+                            </td>
+                            <td><code class="inline">response.setContentType("text/html")</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">session</strong></td>
+                            <td><code class="inline">HttpSession</code></td>
+                            <td>Lưu trữ dữ liệu duy trì trạng thái của người dùng qua nhiều request khác nhau.</td>
+                            <td><code class="inline">session.setAttribute("user", obj)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">application</strong></td>
+                            <td><code class="inline">ServletContext</code></td>
+                            <td>Cung cấp phạm vi dữ liệu rộng nhất, chia sẻ thông tin trên toàn bộ ứng dụng web.</td>
+                            <td><code class="inline">application.setAttribute("appData", data)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">out</strong></td>
+                            <td><code class="inline">JspWriter</code></td>
+                            <td>Luồng ghi dữ liệu trực tiếp lên trang phản hồi HTML của trình duyệt.</td>
+                            <td><code class="inline">out.println("Hello World")</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">config</strong></td>
+                            <td><code class="inline">ServletConfig</code></td>
+                            <td>Chứa thông tin tham số khởi tạo (init parameters) của Servlet/JSP đó.</td>
+                            <td><code class="inline">config.getInitParameter("name")</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">pageContext</strong></td>
+                            <td><code class="inline">PageContext</code></td>
+                            <td>Tham chiếu ngữ cảnh trang, giúp quản lý và truy xuất đến mọi scope và đối tượng khác.
+                            </td>
+                            <td><code class="inline">pageContext.forward("target.jsp")</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">page</strong></td>
+                            <td><code class="inline">Object</code></td>
+                            <td>Tham chiếu đến chính thực thể Servlet hiện tại (tương tự như từ khóa <code
+                                    class="inline">this</code>).</td>
+                            <td><code class="inline">page.hashCode()</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">exception</strong></td>
+                            <td><code class="inline">Throwable</code></td>
+                            <td>Chỉ khả dụng trong các trang có cấu hình <code class="inline">isErrorPage="true"</code>
+                                để lấy thông tin lỗi.</td>
+                            <td><code class="inline">exception.getMessage()</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- New Section: JSTL & EL -->
+        <section id="jstl-el">
+            <h2>★ Cải Tiến: JSTL & Expression Language (EL)</h2>
+            <p>Trong các dự án Java Web thực tế và đề thi PRJ301, lập trình viên <strong>bắt buộc</strong> phải hạn chế
+                viết mã Java thô (Scriptlet) trong JSP bằng cách chuyển sang sử dụng <strong>JSTL (JSP Standard Tag
+                    Library)</strong> và <strong>EL (Expression Language)</strong> để làm mã nguồn sạch sẽ, dễ bảo trì
+                hơn.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">
+                        <span style="color: var(--accent-purple);">⚡</span> 1. Expression Language (EL)
+                    </div>
+                    <p>Cung cấp khả năng truy cập đơn giản và nhanh chóng vào dữ liệu nằm trong các đối tượng Java
+                        (JavaBeans) và các phạm vi lưu trữ (Scopes).</p>
+                    <p><strong>Cú pháp:</strong> <code class="inline">${expression}</code></p>
+                    <p><strong>Ví dụ:</strong> Thay thế <code
+                            class="inline">&lt;%= session.getAttribute("username") %&gt;</code> bằng <code
+                            class="inline">${sessionScope.username}</code>.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">
+                        <span style="color: var(--accent-cyan);">🏷️</span> 2. JSTL Core Tags
+                    </div>
+                    <p>Thư viện thẻ tiêu chuẩn hỗ trợ lập trình cấu trúc điều kiện, vòng lặp và quản lý URL một cách
+                        tường minh.</p>
+                    <p><strong>Khai báo thư viện ở đầu trang JSP:</strong></p>
+                    <div style="margin-top: 10px;">
+                        <code
+                            class="inline">&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Ví Dụ So Sánh Trực Quan</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nhiệm Vụ</th>
+                                <th>Cách Dùng Scriptlet (Cũ - Rối Code)</th>
+                                <th>Cách Dùng JSTL & EL (Hiện Đại - Sạch Sẽ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Hiển thị biến</strong></td>
+                                <td>
+                                    <pre><code><span class="tag">&lt;%</span>
+  <span class="type">User</span> u = (<span class="type">User</span>)request.getAttribute(<span class="string">"user"</span>);
+  out.print(u.getName());
+<span class="tag">%&gt;</span></code></pre>
+                                </td>
+                                <td>
+                                    <pre style="padding: 10px; background: transparent;"><code>${user.name}</code></pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kiểm tra điều kiện</strong></td>
+                                <td>
+                                    <pre><code><span class="tag">&lt;%</span> <span class="keyword">if</span> (role.equals(<span class="string">"admin"</span>)) { <span class="tag">%&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Chào Admin<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;%</span> } <span class="tag">%&gt;</span></code></pre>
+                                </td>
+                                <td>
+                                    <pre><code><span class="tag">&lt;c:if</span> <span class="attr">test</span>=<span class="string">"${user.role == 'admin'}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Chào Admin<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;/c:if&gt;</span></code></pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vòng lặp danh sách</strong></td>
+                                <td>
+                                    <pre><code><span class="tag">&lt;%</span>
+  <span class="type">List</span>&lt;<span class="type">Item</span>&gt; list = (<span class="type">List</span>)request.getAttribute(<span class="string">"items"</span>);
+  <span class="keyword">for</span>(<span class="type">Item</span> i : list) {
+    out.print(i.getName());
+  }
+<span class="tag">%&gt;</span></code></pre>
+                                </td>
+                                <td>
+                                    <pre><code><span class="tag">&lt;c:forEach</span> <span class="attr">var</span>=<span class="string">"item"</span> <span class="attr">items</span>=<span class="string">"${items}"</span><span class="tag">&gt;</span>
+  ${item.name}
+<span class="tag">&lt;/c:forEach&gt;</span></code></pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Servlet API & Cấu Trúc -->
+        <section id="servlet-api">
+            <h2>6. Servlet API & Cấu Trúc Dự Án</h2>
+            <p>Servlet API là tập hợp các giao diện và lớp phục vụ xây dựng và quản trị vòng đời ứng dụng trên máy chủ
+                web:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Các Class & Interface Cốt Lõi</div>
+                    <p><strong>Servlet:</strong> Giao diện định nghĩa các phương thức vòng đời cốt lõi: <code
+                            class="inline">init()</code>, <code class="inline">service()</code>, <code
+                            class="inline">destroy()</code>.</p>
+                    <p style="margin-top: 8px;"><strong>HttpServlet:</strong> Lớp cơ sở (Abstract Class) mở rộng hỗ trợ
+                        trực tiếp giao thức HTTP (cung cấp <code class="inline">doGet</code>, <code
+                            class="inline">doPost</code>, v.v.).</p>
+                    <p style="margin-top: 8px;"><strong>ServletRequest / ServletResponse:</strong> Cung cấp thông tin
+                        truy vấn và tạo phản hồi gửi về client.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Cấu Trúc Thư Mục Chuẩn (Java Web Project)</div>
+                    <div class="code-block-wrapper" style="margin: 0;">
+                        <pre><code>project-root/
+│
+├── src/                    <span class="comment">// Chứa mã nguồn java (.java)</span>
+├── WEB-INF/                <span class="comment">// Thư mục ẩn bảo mật ứng dụng</span>
+│   ├── web.xml             <span class="comment">// File cấu hình Deployment Descriptor</span>
+│   ├── classes/            <span class="comment">// Chứa các file biên dịch (.class)</span>
+│   └── lib/                <span class="comment">// Chứa thư viện bổ trợ (.jar)</span>
+└── META-INF/               <span class="comment">// Chứa metadata cấu hình bổ sung</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>Tomcat Server:</strong> Là một Web Container / Servlet Container phổ biến để thực thi mã
+                    nguồn Java Web, quản lý toàn bộ vòng đời của các Servlet và phân phối các yêu cầu HTTP đến các ứng
+                    dụng web tương ứng.</p>
+            </div>
+        </section>
+
+        <!-- Section 7: Request Response Context -->
+        <section id="request-response">
+            <h2>7. ServletContext, Request & Response</h2>
+            <p>Quản lý vòng đời dữ liệu và chia sẻ thông tin dựa trên các đối tượng trung gian:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">ServletContext</div>
+                    <p>Là một thực thể đại diện cho môi trường hoạt động của ứng dụng, dùng để cấu hình toàn cục hoặc
+                        chia sẻ dữ liệu giữa các Servlet trong cùng ứng dụng.</p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>ServletContext Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="type">ServletContext</span> context = getServletContext();
+context.setAttribute(<span class="string">"myData"</span>, <span class="string">"Shared Value"</span>);
+
+<span class="comment">// Lấy dữ liệu ở Servlet khác</span>
+<span class="type">String</span> data = (<span class="type">String</span>) context.getAttribute(<span class="string">"myData"</span>);</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">HttpServletRequest & Response</div>
+                    <p><strong>Request:</strong> Lấy thông tin từ Client gửi lên (parameter, cookies, attribute).</p>
+                    <p><strong>Response:</strong> Thiết lập dữ liệu và kiểu định dạng (ContentType) gửi về trình duyệt
+                        của khách hàng.</p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>Request & Response Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">protected void</span> doGet(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response) 
+    <span class="keyword">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+    
+    <span class="type">String</span> user = request.getParameter(<span class="string">"username"</span>);
+    response.setContentType(<span class="string">"text/html"</span>);
+    <span class="type">PrintWriter</span> out = response.getWriter();
+    out.println(<span class="string">"&lt;h1&gt;Welcome, "</span> + user + <span class="string">"&lt;/h1&gt;"</span>);
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-section: 4 Scopes -->
+            <h3>Phạm vi lưu trữ dữ liệu (Scopes) trong Java Web</h3>
+            <p>Khi lưu trữ thuộc tính (Attributes) để chuyển giao dữ liệu giữa các trang, ta có 4 phạm vi khác nhau với
+                thời gian sống xác định:</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Scope Name</th>
+                            <th>Thời Gian Sống (Lifetime)</th>
+                            <th>Cách Lấy Đối Tượng</th>
+                            <th>Mục Đích Sử Dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--accent-purple);">Page</strong></td>
+                            <td>Chỉ tồn tại trong trang JSP hiện tại.</td>
+                            <td><code class="inline">pageContext</code></td>
+                            <td>Lưu các biến tạm thời trong trang.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-purple);">Request</strong></td>
+                            <td>Tồn tại trong suốt một chu kỳ yêu cầu của client (Request-Response cycle), bao gồm cả
+                                các trang được forward.</td>
+                            <td><code class="inline">request</code></td>
+                            <td>Chuyển dữ liệu từ Servlet sang trang JSP hiển thị.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-purple);">Session</strong></td>
+                            <td>Tồn tại trong suốt phiên làm việc của một người dùng cụ thể (từ khi truy cập đến khi tắt
+                                trình duyệt hoặc timeout).</td>
+                            <td><code class="inline">request.getSession()</code></td>
+                            <td>Lưu trữ thông tin đăng nhập, giỏ hàng người dùng.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-purple);">Application</strong></td>
+                            <td>Tồn tại từ lúc Server khởi chạy đến khi Server tắt (Chia sẻ cho toàn bộ người dùng).
+                            </td>
+                            <td><code class="inline">getServletContext()</code></td>
+                            <td>Lưu các cấu hình dùng chung, số lượt truy cập ứng dụng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sub-section: Forward vs Redirect -->
+            <div class="card" style="margin-top: 32px;">
+                <div class="card-title">
+                    <span style="color: var(--accent-orange);">⚡</span> Điểm Cốt Lõi: So Sánh Forward và SendRedirect
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Đặc Điểm So Sánh</th>
+                                <th>Forward (RequestDispatcher)</th>
+                                <th>SendRedirect (HttpServletResponse)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nơi xử lý</strong></td>
+                                <td>Hoàn toàn xử lý ở phía <strong>Server</strong>.</td>
+                                <td>Được chuyển tiếp về <strong>Client</strong> xử lý lại.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Địa chỉ URL</strong></td>
+                                <td><strong>Không thay đổi</strong> trên thanh địa chỉ.</td>
+                                <td><strong>Thay đổi</strong> sang URL mới.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vòng đời Request</strong></td>
+                                <td>Giữ nguyên đối tượng Request ban đầu (chuyển tiếp tiếp).</td>
+                                <td>Tạo ra một Request hoàn toàn mới.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hiệu năng</strong></td>
+                                <td>Nhanh hơn vì không cần phản hồi về client.</td>
+                                <td>Chậm hơn vì cần hai vòng Request-Response.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cú pháp code</strong></td>
+                                <td>
+                                    <pre><code>request.getRequestDispatcher(<span class="string">"url"</span>)
+       .forward(request, response);</code></pre>
+                                </td>
+                                <td>
+                                    <pre><code>response.sendRedirect(<span class="string">"url"</span>);</code></pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Kiến Trúc MVC -->
+        <section id="mvc">
+            <h2>8. Mô Hình MVC & Kiến Trúc Phát Triển</h2>
+            <p><strong>MVC (Model-View-Controller)</strong> là mô hình kiến trúc phần mềm giúp phân chia ứng dụng thành
+                3 thành phần chính tách biệt để dễ kiểm soát và phát triển:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Thành Phần Trong MVC</div>
+                    <p><strong>Model:</strong> Đại diện cho dữ liệu và các quy tắc nghiệp vụ (Database, Business Logic
+                        Class, DAO, DTO).</p>
+                    <p style="margin-top: 8px;"><strong>View:</strong> Hiển thị giao diện người dùng và tiếp nhận thao
+                        tác nhập dữ liệu (thường là các trang JSP, HTML).</p>
+                    <p style="margin-top: 8px;"><strong>Controller:</strong> Cầu nối điều khiển luồng, nhận các yêu cầu
+                        HTTP, thao tác trên Model, điều hướng đến View hiển thị (thường là các Servlet).</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Quy Trình Tương Tác MVC</div>
+                    <ul class="lifecycle-list">
+                        <li class="lifecycle-step">Client tương tác trên View, gửi Request.</li>
+                        <li class="lifecycle-step">Controller tiếp nhận Request, xử lý điều hướng và gọi Model xử lý dữ
+                            liệu.</li>
+                        <li class="lifecycle-step">Model cập nhật trạng thái dữ liệu (lấy từ DB).</li>
+                        <li class="lifecycle-step">Controller lựa chọn trang View thích hợp để hiển thị dữ liệu đã cập
+                            nhật.</li>
+                        <li class="lifecycle-step">View hiển thị và kết thúc luồng xử lý.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Flowchart of MVC -->
+            <h3>Sơ Đồ Tương Tác MVC Trực Quan</h3>
+            <div class="visual-flow">
+                <div class="flow-node" style="border-top: 3px solid var(--accent-cyan);">
+                    <div class="flow-node-title">1. View (Trình Duyệt)</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Gửi HTTP Request của
+                        người dùng đi.</p>
+                </div>
+                <div class="flow-arrow">➡️</div>
+                <div class="flow-node" style="border-top: 3px solid var(--accent-purple);">
+                    <div class="flow-node-title">2. Controller (Servlet)</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Nhận Request, gọi
+                        Model phù hợp.</p>
+                </div>
+                <div class="flow-arrow">➡️</div>
+                <div class="flow-node" style="border-top: 3px solid var(--accent-green);">
+                    <div class="flow-node-title">3. Model (DAO/DB)</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Tải dữ liệu DB, trả về
+                        cho Controller.</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>So Sánh JSP Model 1 và Model 2</h3>
+                <p style="margin-top: 8px;"><strong>JSP Model 1:</strong> JSP kiêm nhiệm cả logic nghiệp vụ
+                    (Controller/Model) lẫn hiển thị (View). Kiến trúc này đơn giản nhưng dễ gây rối code, khó bảo trì.
+                </p>
+                <p><strong>JSP Model 2 (MVC chuẩn):</strong> Tách biệt rõ ràng. Servlet đóng vai trò Controller điều
+                    khiển luồng, JSP đóng vai trò View hiển thị, và các JavaBean/DAO xử lý dữ liệu (Model). Đây là kiến
+                    trúc tối ưu được khuyến cáo.</p>
+            </div>
+        </section>
+
+        <!-- Section 9: Session Management -->
+        <section id="session-management">
+            <h2>9. Quản Lý Phiên Làm Việc (Session Management)</h2>
+            <p>HTTP là giao thức <strong>Stateless</strong> (không trạng thái), vì vậy máy chủ không tự nhớ được Client.
+                Để duy trì trạng thái của người dùng qua các trang khác nhau (giỏ hàng, trạng thái đăng nhập), ta có 4
+                giải pháp:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">1. Cookies</div>
+                    <p>Là các tệp văn bản nhỏ được lưu trên trình duyệt của client. Dùng để lưu trữ thông tin tùy chọn,
+                        ghi nhớ trạng thái phiên làm việc.</p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>Cookie Code Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// 1. Tạo Cookie</span>
+<span class="type">Cookie</span> cookie = <span class="keyword">new</span> <span class="type">Cookie</span>(<span class="string">"username"</span>, <span class="string">"JohnDoe"</span>);
+cookie.setMaxAge(60*60*24); <span class="comment">// 1 ngày</span>
+response.addCookie(cookie);
+
+<span class="comment">// 2. Đọc Cookie</span>
+<span class="type">Cookie</span>[] cookies = request.getCookies();
+<span class="keyword">for</span>(<span class="type">Cookie</span> ck : cookies){
+    <span class="keyword">if</span>(ck.getName().equals(<span class="string">"username"</span>)){
+        out.print(ck.getValue());
+    }
+}
+
+<span class="comment">// 3. Xóa Cookie</span>
+cookie.setMaxAge(0);
+response.addCookie(cookie);</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">2. HttpSession</div>
+                    <p>Cơ chế lưu trữ trạng thái người dùng an toàn trên máy chủ. Trình duyệt client chỉ lưu mã Session
+                        ID duy nhất trong Cookie.</p>
+                    <div class="code-block-wrapper">
+                        <div class="code-header">
+                            <span>HttpSession Code Example</span>
+                            <button class="copy-btn">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// Khởi tạo / Lấy phiên hiện tại</span>
+<span class="type">HttpSession</span> session = request.getSession();
+
+<span class="comment">// Thiết lập dữ liệu vào session</span>
+session.setAttribute(<span class="string">"username"</span>, <span class="string">"JohnDoe"</span>);
+
+<span class="comment">// Đọc dữ liệu từ session</span>
+<span class="type">String</span> user = (<span class="type">String</span>) session.getAttribute(<span class="string">"username"</span>);
+
+<span class="comment">// Hủy / Xóa phiên làm việc</span>
+session.invalidate();</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-grid" style="margin-top: 20px;">
+                <div class="card">
+                    <div class="card-title">3. URL Rewriting</div>
+                    <p>Kỹ thuật gắn trực tiếp ID phiên làm việc vào cuối các đường dẫn URL của trang web. Hữu ích khi
+                        client tắt chế độ lưu trữ Cookie trên trình duyệt.</p>
+                    <p style="margin-top: 8px;"><strong>Cú pháp:</strong> <code
+                            class="inline">response.encodeURL("welcome.jsp")</code></p>
+                </div>
+                <div class="card">
+                    <div class="card-title">4. Hidden Form Fields</div>
+                    <p>Sử dụng các trường ẩn trong HTML Form để truyền Session ID hoặc các trạng thái dữ liệu ngầm từ
+                        trang này sang trang khác khi submit biểu mẫu.</p>
+                    <div class="code-block-wrapper">
+                        <pre><code><span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="string">"process.jsp"</span> <span class="attr">method</span>=<span class="string">"post"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"sessionId"</span> <span class="attr">value</span>=<span class="string">"abc123"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"username"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"Submit"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/form&gt;</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 10: Filter & Exception Handling -->
+        <section id="filter-exceptions">
+            <h2>10. Bộ Lọc (Filter) & Xử Lý Lỗi</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Bộ Lọc (Filter Lifecycle)</div>
+                    <p>Filter được sử dụng để can thiệp, kiểm tra hoặc chỉnh sửa các yêu cầu và phản hồi trước/sau khi
+                        chúng đi qua Servlet hoặc JSP (ví dụ: Logging, Authentication, UTF-8 Encoding).</p>
+                    <ul class="lifecycle-list">
+                        <li class="lifecycle-step"><strong>init(FilterConfig):</strong> Khởi tạo Filter.</li>
+                        <li class="lifecycle-step"><strong>doFilter(req, res, chain):</strong> Thao tác tiền xử lý, sau
+                            đó gọi <code class="inline">chain.doFilter(request, response)</code> để đẩy request đi tiếp,
+                            sau đó hậu xử lý phản hồi.</li>
+                        <li class="lifecycle-step"><strong>destroy():</strong> Hủy Filter và giải phóng tài nguyên.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title">Xử Lý Lỗi (Exception Handling)</div>
+                    <p><strong>Trong JSP:</strong> Sử dụng cài đặt <code class="inline">&lt;error-page&gt;</code> trong
+                        file cấu hình <code class="inline">web.xml</code> để tự động chuyển tiếp tới trang hiển thị lỗi
+                        thân thiện.</p>
+                    <p style="margin-top: 8px;"><strong>Trong Servlet:</strong> Thực hiện khối <code
+                            class="inline">try-catch-finally</code> trong mã nguồn Java, chuyển tiếp tới trang lỗi qua
+                        cơ chế Dispatcher:</p>
+                    <div class="code-block-wrapper" style="margin: 8px 0 0 0;">
+                        <pre><code>request.getRequestDispatcher(<span class="string">"/error.jsp"</span>)
+       .forward(request, response);</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flowchart of Filter Chain -->
+            <h3>Luồng Xử Lý Đi Qua Filter Chain</h3>
+            <div class="visual-flow">
+                <div class="flow-node" style="border-left: 3px solid var(--accent-cyan);">
+                    <div class="flow-node-title">1. Client Request</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Gửi từ trình duyệt
+                        Browser.</p>
+                </div>
+                <div class="flow-arrow">➡️</div>
+                <div class="flow-node" style="border-left: 3px solid var(--accent-purple);">
+                    <div class="flow-node-title">2. Filter (Tiền Xử Lý)</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Đọc mã hóa, kiểm
+                        quyền.</p>
+                </div>
+                <div class="flow-arrow">➡️</div>
+                <div class="flow-node" style="border-left: 3px solid var(--accent-green);">
+                    <div class="flow-node-title">3. Servlet / JSP</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Xử lý logic, tạo nội
+                        dung.</p>
+                </div>
+                <div class="flow-arrow">➡️</div>
+                <div class="flow-node" style="border-left: 3px solid var(--accent-orange);">
+                    <div class="flow-node-title">4. Filter (Hậu Xử Lý)</div>
+                    <p style="font-size: 12.5px; margin-bottom: 0; color: var(--text-secondary);">Log dữ liệu, nén
+                        Response.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-title">Mẫu Triển Khai Filter trong Java Servlet</div>
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span>Filter Implementation Example</span>
+                        <button class="copy-btn">Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">public class</span> MyFilter <span class="keyword">implements</span> <span class="type">Filter</span> {
+    <span class="keyword">public void</span> init(<span class="type">FilterConfig</span> config) <span class="keyword">throws</span> <span class="type">ServletException</span> {
+        <span class="comment">// Cấu hình khởi tạo ban đầu</span>
+    }
+    
+    <span class="keyword">public void</span> doFilter(<span class="type">ServletRequest</span> request, <span class="type">ServletResponse</span> response, <span class="type">FilterChain</span> chain)
+        <span class="keyword">throws</span> <span class="type">IOException</span>, <span class="type">ServletException</span> {
+        
+        <span class="comment">// Tiền xử lý: Ví dụ thiết lập mã hóa UTF-8</span>
+        request.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+        
+        <span class="comment">// Chuyển request đến điểm xử lý tiếp theo</span>
+        chain.doFilter(request, response);
+        
+        <span class="comment">// Hậu xử lý (nếu có)</span>
+    }
+    
+    <span class="keyword">public void</span> destroy() {
+        <span class="comment">// Giải phóng tài nguyên dọn dẹp bộ nhớ</span>
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 11: Client-Server -->
+        <section id="client-server">
+            <h2>11. Mô Hình Kiến Trúc Client-Server</h2>
+            <p>Mô hình cơ bản trong môi trường lập trình Web:</p>
+
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-title">Khái Niệm Thành Phần</div>
+                <p><strong>Client (Trình duyệt/Ứng dụng di động):</strong> Thực hiện gửi các truy vấn, yêu cầu tài
+                    nguyên đến máy chủ qua kết nối mạng mạng (yêu cầu HTTP).</p>
+                <p style="margin-top: 8px;"><strong>Server (Tomcat/Máy chủ Web):</strong> Thực hiện lắng nghe, xử lý
+                    logic, truy vấn cơ sở dữ liệu nếu có và đóng gói dữ liệu phản hồi (Response) trả ngược về Client.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Các Bước Giao Tiếp HTTP</div>
+                <ul class="lifecycle-list">
+                    <li class="lifecycle-step">Client gửi một yêu cầu (HTTP Request) đến Server.</li>
+                    <li class="lifecycle-step">Server phân tích và xử lý logic (đọc dữ liệu DB, tính toán logic).</li>
+                    <li class="lifecycle-step">Server chuẩn hóa dữ liệu đầu ra và phản hồi lại Client (HTTP Response).
+                    </li>
+                    <li class="lifecycle-step">Client (Web Browser) nhận phản hồi, phân tách mã HTML/CSS/JS để kết xuất
+                        giao diện trực quan cho người dùng.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section: Interactive Quick Quiz -->
+        <section id="trac-nghiem-on-tap">
+            <h2>📝 Trắc Nghiệm Ôn Tập (Quick Practice Quiz)</h2>
+            <p>Hãy tự kiểm tra lại kiến thức ôn tập chuẩn bị thi hoặc phát triển dự án với các câu hỏi tương tác nhanh
+                dưới đây:</p>
+
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <div class="quiz-title" id="quiz-title">Bộ câu hỏi trắc nghiệm PRJ301</div>
+                    <div class="quiz-progress-container">
+                        <div class="quiz-progress-text" id="quiz-progress-text">Câu 1/5</div>
+                        <div class="quiz-progress-bar">
+                            <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quiz-question" id="quiz-question">Đang tải câu hỏi...</div>
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Dynamic Options -->
+                </div>
+                <div class="quiz-feedback" id="quiz-feedback"></div>
+                <button class="quiz-next-btn" id="quiz-next-btn" style="display: none;">Câu Tiếp Theo ➡️</button>
+                <div style="clear: both;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Load saved theme or default to dark
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        body.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Mobile Menu Drawer Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        menuToggle.addEventListener('click', (e) => {
+            sidebar.classList.toggle('open');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Search Filter Logic
+        const searchInput = document.getElementById('search');
+        const cards = document.querySelectorAll('.card');
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            if (!query) {
+                // Restore original state
+                cards.forEach(card => card.style.display = 'block');
+                sections.forEach(section => section.style.display = 'block');
+                return;
+            }
+
+            sections.forEach(section => {
+                let sectionHasMatch = false;
+                const sectionTitle = section.querySelector('h2').innerText.toLowerCase();
+
+                if (sectionTitle.includes(query)) {
+                    sectionHasMatch = true;
+                }
+
+                const sectionCards = section.querySelectorAll('.card');
+                sectionCards.forEach(card => {
+                    const cardTitle = card.querySelector('.card-title') ? card.querySelector('.card-title').innerText.toLowerCase() : '';
+                    const cardText = card.innerText.toLowerCase();
+
+                    if (cardTitle.includes(query) || cardText.includes(query)) {
+                        card.style.display = 'block';
+                        sectionHasMatch = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (sectionHasMatch) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        // Active Navigation Link on Scroll
+        window.addEventListener('scroll', () => {
+            let currentSectionId = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= (sectionTop - 150)) {
+                    currentSectionId = section.getAttribute('id');
+                }
+            });
+
+            if (currentSectionId) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+
+        // Copy Code to Clipboard Utility
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.parentElement.nextElementSibling.querySelector('code');
+                const text = codeBlock.innerText;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = button.innerText;
+                    button.innerText = 'Copied!';
+                    button.style.borderColor = 'var(--accent-green)';
+                    button.style.color = 'var(--accent-green)';
+
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.style.borderColor = 'var(--border-color)';
+                        button.style.color = 'var(--text-secondary)';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            });
+        });
+
+        // Interactive Quiz Scripting
+        const quizData = [
+            {
+                question: "Sự khác biệt chính về hành vi giữa Forward và Redirect là gì?",
+                options: [
+                    "Forward thay đổi URL trình duyệt; Redirect thì không.",
+                    "Forward giữ nguyên đối tượng request ban đầu; Redirect tạo ra request mới hoàn toàn ở client.",
+                    "Forward xử lý ở Client; Redirect xử lý ở Server.",
+                    "Không có sự khác biệt nào."
+                ],
+                correct: 1,
+                explanation: "Forward chuyển tiếp yêu cầu hoàn toàn bên trong máy chủ (URL không đổi, giữ nguyên Request cũ). Redirect yêu cầu trình duyệt gửi lại một yêu cầu HTTP mới tới địa chỉ mới (URL thay đổi, tạo Request mới)."
+            },
+            {
+                question: "Phạm vi lưu trữ (Scope) nào tồn tại lâu nhất trong ứng dụng Java Web?",
+                options: [
+                    "Request Scope",
+                    "Session Scope",
+                    "Page Scope",
+                    "Application Scope"
+                ],
+                correct: 3,
+                explanation: "Application Scope (ServletContext) bắt đầu khi ứng dụng web chạy và chỉ mất đi khi dừng Server/Tomcat, áp dụng chung cho tất cả người dùng."
+            },
+            {
+                question: "Thẻ JSTL nào dùng để lặp qua danh sách (List) các sản phẩm?",
+                options: [
+                    "&lt;c:if&gt;",
+                    "&lt;c:forEach&gt;",
+                    "&lt;c:set&gt;",
+                    "&lt;c:loop&gt;"
+                ],
+                correct: 1,
+                explanation: "Thẻ &lt;c:forEach&gt; trong thư viện JSTL Core được sử dụng để duyệt qua các mảng, danh sách hoặc tập hợp dữ liệu."
+            },
+            {
+                question: "Cú pháp để khai báo một phương thức hoặc một biến instance trong JSP là gì?",
+                options: [
+                    "&lt;% ... %&gt;",
+                    "&lt;%= ... %&gt;",
+                    "&lt;%! ... %&gt;",
+                    "&lt;%@ ... %&gt;"
+                ],
+                correct: 2,
+                explanation: "Declaration Tag &lt;%! ... %&gt; dùng để khai báo biến hoặc phương thức ở cấp độ lớp Servlet được biên dịch từ trang JSP."
+            },
+            {
+                question: "Phương thức init() trong Servlet Lifecycle chạy bao nhiêu lần?",
+                options: [
+                    "Chỉ chạy 1 lần duy nhất khi Servlet được nạp vào bộ nhớ.",
+                    "Chạy mỗi khi có client gửi Request đến.",
+                    "Chạy 2 lần.",
+                    "Chạy khi có lỗi exception xảy ra."
+                ],
+                correct: 0,
+                explanation: "Phương thức init() của Servlet chỉ được Web Container gọi một lần duy nhất lúc khởi tạo đối tượng Servlet để cấu hình tham số ban đầu."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const quizQuestionEl = document.getElementById('quiz-question');
+        const quizOptionsEl = document.getElementById('quiz-options');
+        const quizFeedbackEl = document.getElementById('quiz-feedback');
+        const quizNextBtn = document.getElementById('quiz-next-btn');
+        const quizProgressTextEl = document.getElementById('quiz-progress-text');
+        const quizProgressFillEl = document.getElementById('quiz-progress-fill');
+
+        function loadQuestion() {
+            answered = false;
+            quizFeedbackEl.style.display = 'none';
+            quizNextBtn.style.display = 'none';
+
+            const currentQuiz = quizData[currentQuestionIndex];
+            quizProgressTextEl.innerText = `Câu ${currentQuestionIndex + 1}/${quizData.length}`;
+
+            // Calculate progress percentage
+            const percentage = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            quizProgressFillEl.style.width = `${percentage}%`;
+
+            quizQuestionEl.innerText = currentQuiz.question;
+
+            quizOptionsEl.innerHTML = '';
+            currentQuiz.options.forEach((option, idx) => {
+                const button = document.createElement('button');
+                button.className = 'quiz-option';
+                button.innerHTML = option;
+                button.addEventListener('click', () => selectOption(idx));
+                quizOptionsEl.appendChild(button);
+            });
+        }
+
+        function selectOption(selectedIdx) {
+            if (answered) return;
+            answered = true;
+
+            const currentQuiz = quizData[currentQuestionIndex];
+            const optionButtons = quizOptionsEl.querySelectorAll('.quiz-option');
+
+            if (selectedIdx === currentQuiz.correct) {
+                optionButtons[selectedIdx].classList.add('correct');
+                score++;
+            } else {
+                optionButtons[selectedIdx].classList.add('incorrect');
+                optionButtons[currentQuiz.correct].classList.add('correct'); // Highlight correct answer
+            }
+
+            // Show feedback
+            quizFeedbackEl.innerHTML = `<strong>Giải thích:</strong> ${currentQuiz.explanation}`;
+            quizFeedbackEl.style.display = 'block';
+
+            quizNextBtn.style.display = 'block';
+        }
+
+        quizNextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                // Show result screen
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizProgressTextEl.innerText = 'Hoàn thành!';
+            quizProgressFillEl.style.width = '100%';
+            quizQuestionEl.innerText = `Kết quả ôn tập của bạn: ${score}/${quizData.length} câu đúng!`;
+
+            quizOptionsEl.innerHTML = '';
+
+            let message = '';
+            if (score === quizData.length) {
+                message = '🎉 Tuyệt vời! Bạn đã nắm vững toàn bộ kiến thức JSP & Servlet!';
+            } else if (score >= 3) {
+                message = '👍 Khá tốt! Hãy đọc lại những câu trả lời chưa chính xác để củng cố kiến thức nhé.';
+            } else {
+                message = '📚 Bạn cần xem lại tài liệu và ghi chép kỹ các phần vòng đời và quản lý session.';
+            }
+
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.style.padding = '24px';
+            feedbackDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+            feedbackDiv.style.borderRadius = '12px';
+            feedbackDiv.style.border = '1px solid var(--border-color)';
+            feedbackDiv.style.textAlign = 'center';
+            feedbackDiv.style.fontSize = '16px';
+            feedbackDiv.innerHTML = `<p style="color: var(--text-primary); font-weight: 700; margin-bottom: 20px;">${message}</p>`;
+
+            const retryBtn = document.createElement('button');
+            retryBtn.className = 'quiz-next-btn';
+            retryBtn.style.float = 'none';
+            retryBtn.innerText = 'Làm lại Trắc nghiệm 🔄';
+            retryBtn.addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+            });
+
+            feedbackDiv.appendChild(retryBtn);
+            quizOptionsEl.appendChild(feedbackDiv);
+
+            quizFeedbackEl.style.display = 'none';
+            quizNextBtn.style.display = 'none';
+        }
+
+        // Initialize first question
+        loadQuestion();
+    </script>
+</body>
+
+</html>
